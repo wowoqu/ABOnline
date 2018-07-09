@@ -1,0 +1,48 @@
+{% extends 'index_base.html' %}
+{% block title %}
+    机构课程
+{% endblock %}
+{% block page_path %}
+    机构课程
+{% endblock %}
+{% block right_content %}
+    <div class="bs-div">
+        <h1>全部课程</h1>
+        <div class="bs-content">
+            {% for course in all_courses.object_list %}
+                <div class="content-div">
+                    <a href=""><img src="/media/{{ course.image }}" alt=""></a>
+                    <h1>{{ course.name }}</h1>
+                    <div style="overflow: hidden">
+                        <span style="float: left;margin-bottom: 20px">课时：<i>{{ course.learn_times }}小时</i></span>
+                        <span style="float: right;margin-bottom: 20px">参加人数：<i>{{ course.students }}</i></span>
+                    </div>
+                    <p style="float:left;">{{ course.course_org.name }}</p>
+                    <p style="float:right;">{{ course.fav_nums }}</p>
+                </div>
+            {% endfor %}
+            <div class="paging-list">
+            <ul>
+                {% if all_courses.has_previous %}
+                    <li class="spec"><a href="?{{ all_courses.previous_page_number.querystring }}"
+                    >上一页</a></li>
+                {% endif %}
+                {% for page in all_courses.pages %}
+                    {% if page %}
+                        {% ifequal page all_courses.number %}
+                            <li class="active"><a href="">{{ page }}</a></li>
+                        {% else %}
+                            <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                        {% endifequal %}
+                    {% else %}
+                        <li><a href="">...</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if all_courses.has_next %}
+                    <li class="spec"><a href="?{{ all_courses.next_page_number.querystring }}">下一页</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        </div>
+    </div>
+{% endblock %}

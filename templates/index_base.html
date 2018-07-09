@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}
+        机构首页
+    {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style_index.css' %}">
+    {% block custom_css %}
+        <link rel="stylesheet" href="{% static 'css/org_base.css' %}">
+    {% endblock %}
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/solve_ajax.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+    {% block custom_js %}
+        <script type="text/javascript">
+        $(function () {
+            function add_fav(current_elem, fav_id, fav_type) {
+                $.ajax({
+                    cache: false,
+                    type: 'POST',
+                    url: "{% url "org:add_fav" %}",
+                    data:{'fav_id': fav_id, 'fav_type': fav_type},
+                    async: true,
+                    beforeSend:function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        console.log(current_elem)
+                        if(data.status == 'fail'){
+                            if(data.msg == '用户未登陆'){
+                                window.location.href='/login/';
+                            }
+                        }else{
+                            current_elem.text(data.msg)
+                        }
+                    }
+                })
+
+            }
+            $('#collect').on('click', function () {
+                add_fav($(this), {{ course_org.id }}, 2)
+            })
+        })
+    </script>
+    {% endblock %}
+</head>
+
+<body>
+<header>
+    <div class="top-nav">
+        <div class="container">
+            <p>服务电话：<b>33333333</b></p>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'users:user_home' %}">{{ request.user.username }}</a>
+            {% else %}
+                <a href="{% url 'register' %}">注册</a>
+                <a href="{% url 'login' %}">登陆</a>
+            {% endif %}
+        </div>
+    </div>
+    {% block logo %}
+            <div class="container logo-search">
+                <img class="logo" src="/media/{{ course_org.image }}" alt="">
+                <h1>{{ course_org.name }}</h1>
+                <div id="collect" class="collect">{% if has_fav %}收藏成功{% else %}收藏{% endif %}</div>
+            </div>
+    {% endblock %}
+
+</header>
+{% block content %}
+    {% block coustom_bread %}
+        <section class="container org-list" style="position: relative">
+            <div class="org-head">
+                <p class="bred"><a href="{% url 'index' %}">首页></a><i><a href="{% url 'org:org_list' %}">课程机构></a></i><i>{% block page_path %}机构首页{% endblock %}</i></p>
+            </div>
+        </section>
+    {% endblock %}
+    <section class="container orgindex-main">
+        <div class="left-nav">
+            {% block left_content %}
+                <ul>
+                    <li class="{% ifequal current_page 'home' %}active{% endifequal %}"><a
+                            href="{% url 'org:org_home' course_org.id %}">机构首页</a></li>
+                    <li class="{% ifequal current_page 'course' %}active{% endifequal %}"><a
+                            href="{% url 'org:org_course' course_org.id %}">机构课程</a></li>
+                    <li class="{% ifequal current_page 'desc' %}active{% endifequal %}"><a
+                            href="{% url 'org:org_desc' course_org.id %}">机构介绍</a></li>
+                    <li class="{% ifequal current_page 'teacher' %}active{% endifequal %}"><a
+                            href="{% url 'org:org_teacher' course_org.id %}">机构讲师</a></li>
+                </ul>
+            {% endblock %}
+        </div>
+
+        <div class="right-content">
+            {% block right_content %}
+                <div class="bs-div">
+                    <h1>全部课程</h1>
+                    <div class="bs-content">
+                        {% for course in all_courses %}
+                            <div class="content-div">
+                                <a href=""><img src="/media/{{ course.image }}" alt=""></a>
+                                <h1>{{ course.name }}</h1>
+                                <div style="overflow: hidden">
+                                    <span style="float: left;margin-bottom: 20px">课时：<i>{{ course.learn_times }}小时</i></span>
+                                    <span style="float: right;margin-bottom: 20px">参加人数：<i>{{ course.students }}</i></span>
+                                </div>
+                                <p style="float:left;">{{ course.course_org.name }}</p>
+                                <p style="float:right;">{{ course.fav_nums }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% for teacher in all_teachers %}
+                    <div class="bs-div" style="overflow: hidden">
+                        <h1>机构教师</h1>
+                        <div class="left">
+                            <a href=""><img src="/media/{{ teacher.image }}" alt=""></a>
+                            <p>昵称：{{ teacher.name }}</p>
+                        </div>
+                        <div class="right">
+                            <h1>java开发教程</h1>
+                            <p>发表于：2015-10-12</p>
+                            <span>课程介绍</span>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="bs-div" style="overflow: hidden">
+                    <h1>机构介绍</h1>
+                    <div class="bs-content">
+                        {{ course_org.desc }}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+
+    </section>
+{% endblock %}
+
+</body>
+
+</html>

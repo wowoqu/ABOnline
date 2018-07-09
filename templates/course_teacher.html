@@ -1,0 +1,75 @@
+{% extends 'organization_class.html' %}
+{#{% extends 'index.html' %}#}
+{% load staticfiles %}
+{% block title %}
+    授课教师
+{% endblock %}
+
+{% block custom_js %}
+{% endblock %}
+
+{% block content %}
+    <section class="container org-list" style="position: relative">
+        <div class="mid-list">
+            <ul>
+                <li class="{% if sort == '' %}
+                    active
+                {% endif %}"><a href="?sort=">全部</a></li>
+                <li class="{% if sort == 'hot' %}
+                    active
+                {% endif %}"><a href="?sort=hot">人气</a></li>
+            </ul>
+            <p class="count">共<span>{{ teacher_count }}</span>人</p>
+            {% for teacher in all_teachers.object_list %}
+                <div class="det-list">
+                    <a href="{% url 'course:teacher_detail' teacher.id %}" style="position: relative;"><img
+                            style="transform:translate(-50%,-50%); position:absolute;left: 50%;top: 50%; width: 110px;height: 110px;border: 2px solid #ccc;border-radius: 50%"
+                            src="/media/{{ teacher.image }}" alt=""></a>
+                    <div class="message">
+                        <h1>{{ teacher.name }}</h1>
+                        <small>工作年限：<span>{{ teacher.work_years }}</span></small>&nbsp;&nbsp;
+                        <small>就职公司：<span>{{ teacher.work_company }}</span></small>
+                        <br>
+                        <small>年龄：<span>{{ teacher.age }}</span></small>
+                        <small>工作职位：<span>{{ teacher.work_position }}</span></small>
+                        <br>
+                        <small>教学特点：{{ teacher.points }}</small>
+                        <small>经典课程： <span>c语言基础入门 数据库基础</span></small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="paging-list">
+            <ul>
+                {% if all_teachers.has_previous %}
+                    <li class="spec"><a href="?{{ all_teachers.previous_page_number.querystring }}"
+                    >上一页</a></li>
+                {% endif %}
+                {% for page in all_teachers.pages %}
+                    {% if page %}
+                        {% ifequal page all_teachers.number %}
+                            <li class="active"><a href="">{{ page }}</a></li>
+                        {% else %}
+                            <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                        {% endifequal %}
+                    {% else %}
+                        <li><a href="">...</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if all_teachers.has_next %}
+                    <li class="spec"><a href="?{{ all_teachers.next_page_number.querystring }}">下一页</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="org-sort" style="top: 0px;">
+            <h1>授课机构排名</h1>
+            {% for teacher in hot_teacher %}
+                <div class="sort">
+                    <h1>{{ forloop.counter }}&nbsp;{{ teacher.name }}</h1>
+                    <p>工龄：{{ teacher.work_years }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div style="width: 100%;height: 50px;"></div>
+    </section>
+{% endblock %}

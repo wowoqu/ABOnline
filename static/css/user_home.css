@@ -1,0 +1,129 @@
+.left1{
+    width: 260px;
+    height: 380px;
+
+}
+.left1>div{
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.left1>div:nth-child(2){
+    height: 210px;
+    display: flex;
+}
+.left1 img{
+    margin: 40px auto 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.left1 p{
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff;
+    background: #717171;
+    margin: 0 auto 20px;
+}
+.left1>div:nth-child(2) p{
+    margin: auto;
+}
+.right1{
+    flex: 1;
+    border: 1px solid #ccc;
+}
+.right1 form>div{
+    height: 46px;
+    line-height: 46px;
+    padding-left: 20px;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+    color: #3c3c3c;
+}
+.right1 form input{
+    margin-left: 20px;
+    outline: 0;
+    border: 1px solid #ccc;
+}
+.right1 form input[type='text'],input[type='email'],input[type='date']{
+    height: 28px;
+    width: 240px;
+    background: #f0f0f0;
+    text-indent: 8px;
+}
+.right1 form .bc-user{
+    padding: 10px 28px;
+    color: #fff;
+    background: #717171;
+    margin:30px auto 0;
+    display: block;
+    cursor: pointer;
+    text-align: center;
+    width: 6%;
+}
+input[type='file']{
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 30px;
+    opacity: 0;
+    z-index: 3;
+    cursor: pointer;
+}
+.bs-div .reset-pass{
+    position: fixed;
+    width: 300px;
+    top: 50%;
+    left: 50%;
+    background: #fff;
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 2px 5px #888888;
+    text-align: center;
+    display: none;
+}
+.reset-pass .re-head{
+    display: flex;
+    font-size: 16px;
+    color: #000;
+    height: 40px;
+    font-weight: bold;
+    line-height: 40px;
+    padding: 10px;
+    background: #CCCCCC;
+}
+.re-head h1{
+    flex: 1;
+    text-indent: 10px;
+    text-align: left;
+}
+.re-head>div{
+    margin-right: 10px;
+    cursor: pointer;
+    /*border: 1px solid red;*/
+}
+.reset-pass input{
+    width: 80%;
+    height: 26px;
+    margin-bottom: 20px;
+    border: 0;
+    background: silver;
+    outline: 0;
+    text-indent: 10px;
+    padding: 4px 0;
+}
+.reset-pass input:nth-of-type(1){
+    margin-top: 30px;
+}
+.reset-pass p{
+    font-size: 14px;
+    color: #fff;
+    background: green;
+    padding: 8px 0px;
+    width: 100px;
+    margin: 10px auto 30px;
+    cursor: pointer;
+}

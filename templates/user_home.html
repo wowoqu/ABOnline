@@ -1,0 +1,236 @@
+{% extends 'index_base.html' %}
+{% load staticfiles %}
+{% block title %}
+    个人中心
+{% endblock %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/org_base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_home.css' %}">
+    <script src="http://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+{% endblock %}
+{% block logo %}
+        <div class="container logo-search">
+            <img class="logo" src="{% static 'images/logo.png' %}" alt="">
+            <h1 style="margin-right: 20px">个人首页</h1>
+        </div>
+{% endblock %}
+{% block coustom_bread %}
+    <section class="container org-list" style="position: relative">
+        <div class="org-head">
+            <p class="bred"><a href="{% url 'index' %}">首页></a><i><a href="{% url 'users:user_home' %}">个人中心></a></i><i>{% block page_path %}个人信息{% endblock %}</i></p>
+        </div>
+    </section>
+{% endblock %}
+{% block left_content %}
+    <ul>
+        <li class="{% ifequal current_page 'home' %}active{% endifequal %}"><a
+                href="">个人资料</a></li>
+        <li class="{% ifequal current_page 'course' %}active{% endifequal %}"><a
+                 href="">我的课程</a></li>
+        <li class="{% ifequal current_page 'desc' %}active{% endifequal %}"><a
+                 href="">我的收藏</a></li>
+        <li class="{% ifequal current_page 'teacher' %}active{% endifequal %}"><a
+                 href="">我的消息</a></li>
+    </ul>
+{% endblock %}
+
+{% block right_content %}
+    <div class="bs-div" style="overflow: hidden;">
+        <h1>个人信息</h1>
+        <div style="display: flex;">
+            <div class="left1">
+                <div>
+                    <form action="{% url 'users:image_upload' %}" enctype="multipart/form-data" method="post" id="jsChangeForm">
+                        <img  id="jsChangeImg" src="/media/{{ user.image }}" alt="">
+                        <p style="position: relative;">修改头像<input id="jsChangeFile" name="image" type="file"></p>
+                        {% csrf_token %}
+                    </form>
+                </div>
+                <div>
+                    <p id="jsDnPass">修改密码</p>
+                </div>
+            </div>
+            <div class="right1">
+                <form action="{% url 'users:user_home' %}" method="post" id="jsUserForm">
+                    <div>
+                        昵&nbsp;&nbsp;&nbsp;&nbsp;称：<input type="text" name="nick_name" value="{{ user.nick_name }}">
+                    </div>
+                    <div>
+                        生&nbsp;&nbsp;&nbsp;&nbsp;日：<input id="jsDate" name="birthday" type="date" value="{{ user.birthday }}">
+                    </div>
+                    <div>
+                        性&nbsp;&nbsp;&nbsp;&nbsp;别：  <input type="radio" name="gender" value="male" {% if user.gender == 'male' %}
+                            checked="checked
+                        {% endif %}"> 男
+                                  <input type="radio" name="gender" value="female" {% if user.gender == 'female' %}
+                            checked="checked
+                        {% endif %}"> 女<br>
+                    </div>
+                    <div>
+                        地&nbsp;&nbsp;&nbsp;&nbsp;址：<input type="text" name="address" value="{{ user.address }}">
+                    </div>
+                    <div>
+                        手&nbsp;&nbsp;&nbsp;&nbsp;机：<input type="text" name="mobile" value="{{ user.mobile|default_if_none:'' }}">
+                    </div>
+                    <div>
+                        邮&nbsp;&nbsp;&nbsp;&nbsp;箱：<input type="email" value="{{ user.email }}">&nbsp;&nbsp;<span id="jsChangeEmail" style="display: inline-block;cursor: pointer">[修改]</span>
+                    </div>
+                    <p class="bc-user">保存</p>
+                {% csrf_token %}
+                </form>
+            </div>
+        </div>
+        <div class="reset-pass" id="jsResetPass">
+            <div class="re-head">
+                <h1>修改密码</h1>
+                <div id="close">x</div>
+            </div>
+            <form action="{% url 'users:update_pwd' %}" method="post" id="jsPassForm">
+                <input type="password" placeholder="请输入密码" name="password" id="jsPass1"><br>
+                <input type="password" placeholder="请重新输入密码" name="re_password" id="jsPass2">
+                <p id="jsPassSub">提交</p>
+                {% csrf_token %}
+            </form>
+        </div>
+        <div id="jsCgEmail" class="reset-pass">
+            <div class="re-head">
+                <h1>修改邮箱</h1>
+                <div id="jsEmailClose">x</div>
+            </div>
+            <form id="jsEmailForm">
+                <input type="email" placeholder="请输入邮箱" name="email"><br>
+                <span style="position: relative;">
+                    <input type="text" placeholder="" name="code" style="margin-top: 0px">
+                    <div id="jsGetCode" style="position: absolute;top: -7px;cursor: pointer;color:#fcfcfc;right:0px;padding: 6px 16px;background: orange;">获取验证码</div>
+                </span>
+                <p id="jsEmailPass">提交</p>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+    <div style="position: fixed">
+        <h1 id="ss">修改密码</h1>
+    </div>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript" src="{% static 'js/jquery.form.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#jsChangeFile').change(function () {
+                var filePath = $(this).val();//读取图片路径
+                console.log(filePath)
+                var fr = new FileReader();//创建new FileReader()对象
+                console.log(fr)
+                var imgObj = this.files[0];//获取图片
+                console.log(imgObj)
+                fr.readAsDataURL(imgObj);//将图片读取为DataURL
+                var obj = $('#jsChangeImg')[0];//
+
+                if(filePath.indexOf("jpg") != -1 || filePath.indexOf("JPG") != -1 || filePath.indexOf("PNG") != -1 || filePath.indexOf("png") != -1) {
+                    var arr = filePath.split('\\');
+                    var fileName = arr[arr.length - 1];
+
+                    {#$(this).parent().next().show();#}
+                    fr.onload = function() {
+                        obj.src = this.result;
+                    };
+                } else {
+                    console.log('error');
+                    //$(this).parent().next().show();
+                    //$(this).parent().next().children("i").html("您未上传文件，或者您上传文件类型有误！").css("color", "red");
+                    //$(this).parent().next().html("您未上传文件，或者您上传文件类型有误！").css("color","red");
+                    return false
+                }
+                var options = {
+                    url: "{% url 'users:image_upload' %}",  //提交地址：默认是form的action,如果申明,则会覆盖
+                    type: "post",   //默认是form的method（get or post），如果申明，则会覆盖
+                    success: function (data) {
+                        if(data.status == 'success'){
+                            console.log('提交成功');
+                        }else if(data.status == 'fail'){
+                            console.log('提交失败');
+                        }
+                    },  //提交成功后的回调函数
+                    dataType: "json", //html(默认), xml, script, json...接受服务端返回的类型
+                    clearForm: true,  //成功提交后，是否清除所有表单元素的值
+                    resetForm: true,  //成功提交后，是否重置所有表单元素的值
+                    timeout: 3000     //限制请求的时间，当请求大于3秒后，跳出请求
+                };
+                $('#jsChangeForm').ajaxSubmit(options);
+            });
+            $('#jsDnPass').bind('click', function () {
+                $('#jsResetPass').css('display', 'block');
+            });
+            $('#close').bind('click', function () {
+                $('#jsResetPass').css('display', 'none');
+            });
+            $('#jsPassSub').on('click',function () {
+                $('#jsPassForm').ajaxSubmit(function (data) {
+                    if(data.status == 'success'){
+                        console.log('提交成功');
+                        $('#jsResetPass').css('display', 'none');
+                    } else if(data.status == 'fail'){
+                        console.log(data.msg);
+                    } else if(data.password){
+                        console.log(data);
+                    }
+                });
+            });
+            $('#jsChangeEmail').bind('click', function () {
+                $('#jsCgEmail').show()
+            });
+            $('#jsEmailClose').bind('click', function () {
+                $('#jsCgEmail').hide()
+            });
+            //格式化日，如果小于9，前面补0
+            var day = ("0" + {{ user.birthday.day }}).slice(-2);
+            //格式化月，如果小于9，前面补0
+            var month = ("0" + {{ user.birthday.month }}).slice(-2);
+            //拼装完整日期格式
+            var today = {{ user.birthday.year }}+"-"+(month)+"-"+(day) ;
+            //完成赋值
+            $('#jsDate').val(today);
+            $('#jsGetCode').bind('click', function () {
+                console.log('click');
+                $.ajax({
+                    type: 'get',
+                    url: "{% url "users:sendemail_code" %}",
+                    data: {"email":$('#jsEmailForm input[type="email"]').val()},
+                    async: true,
+                    success: function (data) {
+                        console.log(data);
+                        if(data.status == 'success'){
+                            {#$('#jsEmailForm')[0].reset();#}
+                            console.log('提交成功');
+                        }else if(data.status == 'fail'){
+                            {#console.log(data.email);#}
+                            console.log('提交失败');
+                        }
+                    }
+                })
+            });
+            $('#jsEmailPass').bind('click', function () {
+                console.log('tijiao')
+                var options = {
+                    url: "{% url 'users:update_email' %}",  //提交地址：默认是form的action,如果申明,则会覆盖
+                    type: "post",   //默认是form的method（get or post），如果申明，则会覆盖
+                    success: function (data) {
+                        console.log(data.email);
+                    },  //提交成功后的回调函数
+                    dataType: "json", //html(默认), xml, script, json...接受服务端返回的类型
+                    clearForm: true,  //成功提交后，是否清除所有表单元素的值
+                    resetForm: true,  //成功提交后，是否重置所有表单元素的值
+                    timeout: 3000     //限制请求的时间，当请求大于3秒后，跳出请求
+                };
+                $('#jsEmailForm').ajaxSubmit(options);
+            });
+            $('.bc-user').bind('click',function () {
+                $('#jsUserForm').ajaxSubmit(function (data) {
+                    console.log(data.msg + '110');
+                    alert('个人信息修改成功');
+                    return false;
+                })
+            })
+        })
+    </script>
+{% endblock %}

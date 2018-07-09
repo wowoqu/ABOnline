@@ -1,0 +1,103 @@
+.course-detail{
+    width: 1200px;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+.course-detail .det-left{
+    float: left;
+    width: 945px;
+    overflow: hidden;
+}
+.course-detail .det-left>img{
+    width: 440px;
+    height: 440px;
+    float: left;
+    background: #3c3c3c;
+}
+.det-left .part{
+    float: right;
+    width: 480px;
+}
+.det-left .part h1{
+    font-size: 24px;
+}
+.det-left .part p{
+    font-size: 14px;
+    margin: 25px 0;
+}
+.det-left .part .part-mid{
+    width: 480px;
+    background: #f4f4f4;
+    height: 65px;
+    line-height: 65px;
+    display: flex;
+}
+.det-left .part-mid span{
+    font-size: 12px;
+    color: #ccc;
+    padding: 0 10px;
+}
+.det-left .part-btn{
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.det-left .part-btn>div{
+    width: 180px;
+    height: 40px;
+    line-height: 40px;
+    background: #ff7800;
+    color: #fff;
+    cursor: pointer;
+}
+.course-detail .det-right{
+    float: right;
+    width: 210px;
+    border: 1px solid #ccc;
+    min-height: 440px;
+}
+.det-right .head{
+    background: #717171;
+    height: 70px;
+    color: #fff;
+    padding-left: 20px;
+}
+.det-right .head h1{
+    font-size: 18px;
+    padding: 10px 0 8px;
+}
+.det-right>img{
+    width: 150px;
+    height: 80px;
+    border: 1px solid #ccc;
+    /*background: #3c3c3c;*/
+    margin:20px 0 20px 29px;
+    display: block;
+}
+.det-right>p{
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #ff7800;
+    color: #ff7800;
+    margin: 20px auto;
+    text-align: center;
+}
+.det-right>h2{
+    font-size: 14px;
+    color: #b7abc6;
+    text-indent: 21px;
+    margin-bottom: 10px;
+}
+.h1-style{
+    font-size: 14px;
+    color: #3c3c3c;
+    height: 50px;
+    line-height: 50px;
+    text-indent: 16px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #ccc;
+    /*overflow: hidden;*/
+}

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}
+        ABOnline首页
+    {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style_index.css' %}">
+    {% block custom_css %}
+    
+    {% endblock %}
+    {% block remo %}
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/solve_ajax.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+    {% endblock %}
+
+    {% block custom_js %}
+    
+    {% endblock %}
+</head>
+
+<body>
+    <header>
+        <div class="top-nav">
+            <div class="container">
+                <p>服务电话：<b>33333333</b></p>
+                {% if request.user.is_authenticated  %}
+		            <a href="{% url 'users:user_home' %}">{{ request.user.username }}</a>
+		            {% else %}
+		            <a href="{% url 'register' %}">注册</a>
+                	<a href="{% url 'login' %}">登陆</a>
+		        {% endif %}
+            </div>
+        </div>
+        <div class="container logo-search" style="overflow: visible;">
+            <img class="logo" src="{% static 'images/logo.png' %}" alt="">
+            <h1>ABONLINE</h1>
+            <div class="search-bar" style="position: relative;">
+                <div id="jsKeyWord" class="search-left">公开课</div>
+                <input id="jsSK" type="text" placeholder="请输入搜索内容">
+                <div id="jsSU" class="search-right"></div>
+                <ul id="jsSearch">
+                    <li>公开课</li>
+                    <li>课程机构</li>
+                    <li>授课老师</li>
+                </ul>
+            </div>
+        </div>
+        <div class="list-nav">
+            <div class="container">
+                <ul>
+                    {% block listnav %}
+                    <li {% if request.path == '/' %}
+                            class="active"
+                        {% endif %}><a href="{% url 'index' %}">首页</a></li>
+                    <li {% if request.path|slice:'7' == '/course' and request.path|slice:'16' != '/course/teacher/' %}
+                            class="active"
+                        {% endif %}><a href="{% url 'course:course_list' %}">公开课</a></li>
+                    <li {% if request.path|slice:'16' == '/course/teacher/' or request.path|slice:'13' == '/org/teacher/' %}
+                            class="active"
+                        {% endif %}><a href="{% url 'course:teacher_list' %}">授课教师</a></li>
+                    <li {% if request.path|slice:'4' == '/org' %}
+                            class="active"
+                        {% endif %}><a href="{% url 'org:org_list' %}">授课机构</a></li>
+                    {% endblock %}
+                </ul>
+            </div>
+        </div>
+    </header>
+    {% block content %}
+    <section class="banner">
+        <div class="container ban-wrap">
+            <ul class="ban-main">
+                <li class="ban-car active">
+                    <img src="{% static 'images/57aa86a0000145c512000460.jpg' %}" alt=""></li>
+                <li class="ban-car">
+                    <img src="{% static 'images/57a801860001c34b12000460.jpg' %}" alt=""></li>
+                <li class="ban-car">
+                    <img src="{% static 'images/57035ff200014b8a06000338-240-135.jpg' %}" alt=""></li>
+                <li class="ban-car">
+                    <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt=""></li>
+            </ul>
+            <div style="position: relative;">
+                <ul class="little">
+                    <li class="def active"></li>
+                    <li class="def"></li>
+                    <li class="def"></li>
+                    <li class="def"></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="container icon-nav">
+        <ul>
+            <li><a href="">
+    				<img src="{% static 'images/feature1.png' %}" alt="">
+    				<p>专业权威</p>
+    			</a></li>
+            <li><a href="">
+    				<img src="{% static 'images/feature2.png' %}" alt="">
+    				<p>课程最新</p>
+    			</a></li>
+            <li><a href="">
+    				<img src="{% static 'images/feature3.png' %}" alt="">
+    				<p>名师授课</p>
+    			</a></li>
+            <li><a href="">
+    				<img src="{% static 'images/feature4.png' %}" alt="">
+    				<p>数据真实</p>
+    			</a></li>
+        </ul>
+    </section>
+    <section class="container mid-detail">
+        <h1 class="title">公开课程</h1>
+        <div class="class-more">
+            <p>名师授课
+                <br>专业权威</p>
+            <a href="">查看更多课程 ></a>
+        </div>
+        <div class="mid-right">
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+            <div class="cls-content">
+                <img src="{% static 'images/540e57300001d6d906000338-240-135.jpg' %}" alt="">
+                <p>python入门</p>
+                <div style="display: flex;">
+                    <span>难度:&nbsp;</span>
+                    <span style="margin-right: auto;color: red;">中级</span>
+                    <span>学习人数:&nbsp;</span>
+                    <i style="margin-right: 5px">0</i>
+                </div>
+                <div class="organization">
+                    南京大学
+                </div>
+                <div class="collect">
+                    <i>0</i>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="container" style="height: 20px"></section>
+    {% endblock %}
+
+    <footer>
+        <p>ABOnline-在线学习平台</p>
+    </footer>
+    <script type="text/javascript">
+        $(function () {
+            $('#jsKeyWord').hover(function () {
+                $('#jsSearch').css('display', 'block');
+            });
+            $('#jsSearch li').bind('click', function () {
+                $('#jsKeyWord').html($(this).html());
+                $('#jsSearch').css('display', 'none');
+            });
+            var searchtype;
+            var searchkey;
+            $('#jsSU').bind('click', function () {
+                searchtype = $('#jsKeyWord').html();
+                searchkey = $('#jsSK').val();
+                if (searchkey && searchtype){
+                    if (searchtype == '公开课'){
+                        console.log(1 + searchkey);
+                        window.location.href = '/course/list/?keyword='+ searchkey;
+                    }
+                    if (searchtype == '课程机构'){
+                        console.log(2 + searchkey);
+                        window.location.href = '/org/list/?keyword='+ searchkey;
+                    }
+                    if (searchtype == '授课老师'){
+                        console.log(3 + searchkey);
+                        window.location.href = '/course/teacher/?keyword='+ searchkey;
+                    }
+                }
+            });
+
+        })
+    </script>
+</body>
+
+</html>

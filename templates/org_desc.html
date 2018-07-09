@@ -1,0 +1,15 @@
+{% extends 'index_base.html' %}
+{% block title %}
+    机构介绍
+{% endblock %}
+{% block page_path %}
+    机构介绍
+{% endblock %}
+{% block right_content %}
+    <div class="bs-div" style="overflow: hidden">
+        <h1>机构介绍</h1>
+        <div class="bs-content">
+            {{ course_org.desc }}
+        </div>
+    </div>
+{% endblock %}

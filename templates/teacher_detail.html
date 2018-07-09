@@ -1,0 +1,118 @@
+{% extends 'course-detail.html' %}
+{% load staticfiles %}
+{% block title %}
+    讲师详情
+{% endblock %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/course-detail.css' %}">
+    <link rel="stylesheet" href="{% static 'css/teacher_detail.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="container org-list" style="position: relative">
+        <div class="org-head">
+            <p class="bred"><a href="{% url 'index' %}">首页></a><a href="{% url 'course:teacher_list' %}">授课讲师></a><i>讲师详情</i>
+            </p>
+        </div>
+        <div class="teacher-left">
+            <div class="teacher-main">
+                <div class="t-img">
+                    <img src="/media/{{ teacher.image }}" alt="">
+                    <span id="jsLeftBtn" style="margin-right: 8px;cursor: pointer;">{% if has_teacher_faved %}
+                    已收藏{% else %}收藏
+                {% endif %}</span>
+                    <span>分享</span>
+                </div>
+                <div class="teacher-det" style="margin-right: 20px">
+                    <h1>{{ teacher.name }}</h1>
+                    <p>工作年限：{{ teacher.work_years }}</p>
+                    <p>就职公司：{{ teacher.work_company }}</p>
+                    <p>工作职位：{{ teacher.work_position }}</p>
+                    <p>教学特点：{{ teacher.points }}</p>
+                </div>
+            </div>
+            <div class="all-course">
+                <h1>全部课程</h1>
+                <div class="bs-content">
+                    {% for course in all_courses %}
+                        <div class="content-div">
+                            <a href=""><img src="/media/{{ course.image }}" alt=""></a>
+                            <h1>{{ course.name }}</h1>
+                            <div style="overflow: hidden">
+                                <span style="float: left;margin-bottom: 20px">课时：<i>{{ course.learn_times }}小时</i></span>
+                                <span style="float: right;margin-bottom: 20px">参加人数：<i>{{ course.students }}</i></span>
+                            </div>
+                            <p style="float:left;">{{ course.course_org.name }}</p>
+                            <p style="float:right;">{{ course.fav_nums }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="teacher-right">
+            <div class="det-right">
+                <div class="head">
+                    <h1>{{ teacher.org.name }}</h1>
+                    <p>世界名校，课程权威</p>
+                </div>
+                <img src="/media/{{ teacher.org.image }}" alt="">
+                <h1 style="text-align: center;font-size: 16px;">{{ teacher.org.name }}</h1>
+                <h2 style="text-align: center;text-indent: 0">地址：<i>{{ teacher.org.address }}</i></h2>
+                <p id="jsRightBtn" style="cursor: pointer;">{% if has_org_faved %}
+                    已收藏{% else %}收藏
+                {% endif %}</p>
+                {#            <span>认&nbsp;&nbsp;证：<i>4</i></span>#}
+            </div>
+            <div class="det-right">
+                <h1 class="h1-style">讲师排行榜</h1>
+                {% for teacher in sorted_teacher %}
+                    <div style="margin: 10px;border: 1px solid #ccc;">
+                        <img src="/media/{{ teacher.image }}" alt="" style="float: left;width: 80px;height: 80px;display: block;float: left">
+                        <div style="float: right;width: 60%">
+                            <h3 style="margin: 16px 20px;font-size: 14px;color: #3c3c3c;">{{ teacher.name }}</h3>
+                            <span style="padding-left: 20px">工作年限：{{ teacher.work_years }}</span>
+                        </div>
+                        <div style="clear: both"></div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript">
+        $(function () {
+            function add_fav(current_elem, fav_id, fav_type) {
+                $.ajax({
+                    cache: false,
+                    type: 'POST',
+                    url: "{% url "org:add_fav" %}",
+                    data: {'fav_id': fav_id, 'fav_type': fav_type},
+                    async: true,
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        console.log(current_elem);
+                        if (data.status == 'fail') {
+                            if (data.msg == '用户未登陆') {
+                                window.location.href = '/login/';
+                            }
+                        } else {
+                            current_elem.text(data.msg)
+                        }
+                    }
+                })
+
+            }
+
+            $('#jsLeftBtn').on('click', function () {
+                add_fav($(this), {{ teacher.id }}, 3);
+            });
+            $('#jsRightBtn').on('click', function () {
+                add_fav($(this), {{ teacher.org.id }}, 2);
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'index_base.html' %}
+{% block title %}
+    机构讲师
+{% endblock %}
+{% block page_path %}
+    机构讲师
+{% endblock %}
+{% block right_content %}
+    {% for teacher in all_teachers %}
+        <div class="bs-div" style="overflow: hidden">
+            <h1>机构教师</h1>
+            <div class="left">
+                <a href=""><img src="/media/{{ teacher.image }}" alt=""></a>
+                <p>昵称：{{ teacher.name }}</p>
+            </div>
+            <div class="right">
+                <h1>工作年限：{{ teacher.work_years }}</h1>
+                <p>课程数：3</p>
+{#                <span>课程介绍</span>#}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

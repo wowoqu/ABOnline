@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="no-js">
+{% load staticfiles %}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>找回密码</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Free HTML5 Template by FreeHTML5.co" />
+    <meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive" />
+    <!-- Facebook and Twitter integration -->
+    <meta property="og:title" content="" />
+    <meta property="og:image" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:site_name" content="" />
+    <meta property="og:description" content="" />
+    <meta name="twitter:title" content="" />
+    <meta name="twitter:image" content="" />
+    <meta name="twitter:url" content="" />
+    <meta name="twitter:card" content="" />
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href='{% static "css/animate.css" %}'>
+    <link rel="stylesheet" href='{% static "css/style1.css" %}'>
+    <style>
+        ul, ol, li{
+            list-style: none;
+        }
+    </style>
+    <!-- Modernizr JS -->
+    <script src='{% static "js/modernizr-2.6.2.min.js" %}'></script>
+    <!-- FOR IE9 below -->
+    <!--[if lt IE 9]>
+    <script src={% static "js/respond.min.js" %}></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <!-- Start Sign In Form -->
+                <form class="fh5co-form animate-box" data-animate-effect="fadeIn" method="post" autocomplete="on" action="{% url 'forget_pwd' %}">
+                    <h2>找回密码</h2>
+                    <div class="form-group">
+                        <label for="username" class="sr-only">邮箱</label>
+                        <input type="email" value="{% if forget_form.data %}{{ forget_form.username.value }}{% endif %}" class="form-control" id="username" name="username" placeholder="Email" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        {{ forget_form.captcha }}
+                    </div>
+                    <div class="form-group">
+                        {% if msg %}
+                        <p>{{ msg }}</p>
+                        {% endif %}
+                        {% for key,error in forget_form.errors.items %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="submit" value="找回密码" class="btn btn-primary">
+                    </div>
+                </form>
+                <!-- END Sign In Form -->
+            </div>
+        </div>
+    </div>
+    <!-- jQuery -->
+    <script src='{% static "js/jquery.min.js" %}'></script>
+    <!-- Bootstrap -->
+    <script src='{% static "js/bootstrap.min.js" %}'></script>
+    <!-- Placeholder -->
+    <script src='{% static "js/jquery.placeholder.min.js" %}'></script>
+    <!-- Waypoints -->
+    <script src='{% static "js/jquery.waypoints.min.js" %}'></script>
+    <!-- Main JS -->
+    <script src='{% static "js/main1.js" %}'></script>
+    <script>
+    $(function() {
+        $('.captcha').css('cursor', 'pointer');
+        $(".captcha").click(function() {
+            $.getJSON("{% url 'refresh_captcha' %}", function(json) {
+                // This should update your captcha image src and captcha hidden input
+                // debugger;
+                var status = json['status'];
+                var new_cptch_key = json['new_cptch_key'];
+                var new_cptch_image = json['new_cptch_image'];
+                id_captcha_0 = $("#id_reg_captcha_0");
+                img = $(".captcha");
+                id_captcha_0.attr("value", new_cptch_key);
+                img.attr("src", new_cptch_image);
+            });
+        });
+    })()
+    </script>
+</body>
+
+</html>

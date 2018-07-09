@@ -1,0 +1,167 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block title %}
+    公开课视频信息
+{% endblock %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/course-vedio.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="container org-list" style="position: relative">
+        {% block video_play %}
+            <div class="org-head">
+                <p class="bred"><a href="{% url 'index' %}">首页></a><a href="{% url 'course:course_list' %}">公开课程></a><a
+                        href="{% url 'course:course_list' %}">课程详情></a><i>章节信息</i></p>
+            </div>
+            <div class="total">
+                <h1>{{ course.name }}</h1>
+                <ul>
+                    <li><h2>{{ course.get_degree_display }}</h2>
+                        <p>难度</p></li>
+                    {#                <li><h2>7<span>小时</span>0<span>分</span></h2><p>时长</p></li>#}
+                    <li><h2>{{ course.learn_times }}分钟</h2>
+                        <p>时长</p></li>
+                    <li><h2>{{ course.students }}</h2>
+                        <p>学习人数</p></li>
+                </ul>
+            </div>
+        {% endblock %}
+        <div class="mid-cont">
+            <div class="lesson-left">
+                <ul>
+                    <li class="active" id="comment">评论</li>
+                    <li id="lesson">章节</li>
+                </ul>
+                <div class="lesson-cont" style="display: none">
+                    <p><span>课程公告：</span>Spring的文档以及相关的jar文件已上传</p>
+                    <dl>
+                        {% for lesson in course.get_course_lesson %}
+                            <dt>{{ lesson.name }}</dt>
+                            {% for vedio in lesson.get_vedio %}
+                                <dd><a href="{% url 'course:video_play' vedio.id %}">{{ vedio.name }}({{ vedio.learn_times }})</a></dd>
+                            {% endfor %}
+                        {% endfor %}
+                    </dl>
+                </div>
+                <div class="comment-conf">
+                    <textarea name="" id="js-comment" cols="30" rows="10"
+                              placeholder="扯淡、吐槽、表扬、鼓励......想说啥就说啥！"></textarea>
+                    <button id="comm-submit">发表评论</button>
+                    {% for comment in all_comments.object_list %}
+                        <div class="user-comm">
+                            <img src="/media/{{ comment.user.image }}" alt="">
+                            <div class="comm-right">
+                                <h1>{{ comment.user.username }}</h1>
+                                <p>{{ comment.comments }}</p>
+                                <span style="display:block;margin-bottom: 10px">时间：{{ comment.add_time }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="comment-list">
+                        <ul>
+                            {% if all_comments.has_previous %}
+                                <li class="spec"><a href="?{{ all_comments.previous_page_number.querystring }}"
+                                >上一页</a></li>
+                            {% endif %}
+                            {% for page in all_comments.pages %}
+                                {% if page %}
+                                    {% ifequal page all_comments.number %}
+                                        <li class="active"><a href="">{{ page }}</a></li>
+                                    {% else %}
+                                        <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                    {% endifequal %}
+                                {% else %}
+                                    <li><a href="">...</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if all_comments.has_next %}
+                                <li class="spec"><a href="?{{ all_comments.next_page_number.querystring }}">下一页</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="down-right">
+                <h1>资料下载</h1>
+                {% for resource in course.get_course_resource %}
+                    <div class="le-re">
+                        <p>{{ resource.name }}</p>
+                        <div><a href="/media/{{ resource.download }}">下载</a></div>
+                    </div>
+                {% endfor %}
+                <h1>讲师提示</h1>
+                <div class="teacher">
+                    <a href=""><img src="/media/{{ course.teacher.image }}" alt=""></a>
+                    <h3>{{ course.teacher.name }}</h3>
+                    <p>{{ course.teacher.work_position }}</p>
+                </div>
+                <div class="you_know">
+                    <dl>
+                        <dt>课程须知</dt>
+                        <dd>{{ course.youneed_know }}</dd>
+                        <dt>老师告诉你能学到什么？</dt>
+                        <dd>{{ course.teacher_tell }}</dd>
+                    </dl>
+                </div>
+                {% for relate_course in relate_courses %}
+                    <h1>该课程的同学还学过</h1>
+                    <a style="display: block;width: 100%;height: 120px;margin: 10px 0;" href=""><img
+                            style="width: 100%;height: 100%;" src="/media/{{ relate_course.image }}" alt=""></a>
+                    <p>{{ relate_course.name }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="height: 20px;"></div>
+    </section>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript">
+        $(function () {
+            $('#lesson').bind('click', function () {
+                $('.comment-conf').css('display', 'none');
+                $('.lesson-cont').css('display', 'block');
+                $(this).addClass('active').siblings().removeClass('active');
+                {#console.log(1)#}
+            });
+            $('#comment').bind('click', function () {
+                $('.comment-conf').css('display', 'block');
+                $('.lesson-cont').css('display', 'none');
+                $(this).addClass('active').siblings().removeClass('active');
+                {#console.log(2)#}
+            });
+            $('#comm-submit').on('click', function () {
+                var comments = $('#js-comment').val();
+                if (comments == '') {
+                    alert('评论不能为空');
+                    return
+                }
+                $.ajax({
+                    cache: false,
+                    type: 'POST',
+                    url: "{% url "course:add_comments" %}",
+                    data: {'course_id': {{ course.id }}, 'comments': comments},
+                    async: true,
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
+                    },
+                    success: function (data) {
+                        console.log(data.msg);
+                        console.log(data.status);
+                        if (data.status == 'fail') {
+                            if (data.msg == '用户未登陆') {
+                                window.location.href = '/login/';
+                            } else {
+                                alert(data.msg)
+                            }
+                        } else if (data.status == 'success') {
+                            alert('成功');
+                            $('#js-comment').val("");
+                            window.location.reload();
+                            $('#comment').addClass('active').siblings().removeClass('active');
+                        }
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block title %}
+    公开课列表
+{% endblock %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/course-detail.css' %}">
+{% endblock %}
+{% block content %}
+<section class="container org-list" style="position: relative">
+    <div class="org-head">
+        <p class="bred"><a href="{% url 'index' %}">首页></a><a href="{% url 'course:course_list' %}">公开课程></a><i>课程详情</i></p>
+    </div>
+    <div class="course-detail">
+        <div class="det-left">
+            <img src="/media/{{ course.image }}" alt="">
+            <div class="part">
+                <h1>{{ course.name }}</h1>
+                <p>{{ course.desc }}</p>
+                <div class="part-mid">
+                    <span style="margin-right: auto;">难度: <i style="font-size: 26px;color: orange">{{ course.get_degree_display }}</i></span>
+                    <span>学习人数: {{ course.students }}</span>
+                </div>
+                <div class="part-bottom">
+                    <p>时&nbsp;&nbsp;长：{{ course.learn_times }}</p>
+                    <p>章 节 数：{{ course.get_zj_nums }}</p>
+                    <p>课程类别：{{ course.category }}</p>
+                    <p>学习用户：{% for user_course in course.get_learn_users  %}
+                        <img src="/media/{{ user_course.user.image }}" alt="" style="width: 40px;height: 40px;border-radius: 50%">
+                    {% endfor %}
+                    </p>
+                </div>
+                <div class="part-btn">
+                    <div id="jsLeftBtn" class="btn-co" style="background: #717171;margin-right: 14px">{% if has_fav_course %}
+                        已收藏{% else %}收藏
+                    {% endif %}</div>
+                    <div class="btn-st"><a style="color: #fff;" href="{% url 'course:course_vedio' course.id %}">开始学习</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="det-right">
+            <div class="head">
+                <h1>授课机构</h1>
+                <p>世界名校，课程权威</p>
+            </div>
+            <img src="/media/{{ course.course_org.image }}" alt="">
+            <h1 style="text-align: center;font-size: 16px;">慕课网</h1>
+            <p id="jsRightBtn" style="cursor: pointer;">{% if has_fav_org %}
+                        已收藏{% else %}收藏
+                    {% endif %}</p>
+            <h2>课 程 数：<i>{{ course.course_org.course_nums }}</i></h2>
+            <h2>教 师 数：<i>{{ course.course_org.get_teacher_nums }}</i></h2>
+            <h2>所在地区：<i>{{ course.course_org.address }}</i></h2>
+{#            <span>认&nbsp;&nbsp;证：<i>4</i></span>#}
+        </div>
+    </div>
+    <div class="course-detail">
+        <div class="det-left" style="border: 1px solid #ccc">
+            <h1 class="h1-style">课程详情</h1>
+            <div style="margin: 20px 10px">{{ course.detail }}</div>
+        </div>
+        <div class="det-right">
+            <h1 class="h1-style">相关课程推荐</h1>
+            {% for relate in relate_course %}
+                <img src="/media/{{ relate.image }}" alt="" style="width: 170px;height: 220px;margin-left: 20px">
+                <h3 style="margin: 16px 20px;font-size: 14px;color: #3c3c3c;">{{ relate.name }}</h3>
+                <span style="padding-left: 20px">学习时长：{{ relate.learn_times }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript">
+        $(function () {
+                function add_fav(current_elem, fav_id, fav_type) {
+                    $.ajax({
+                        cache: false,
+                        type: 'POST',
+                        url: "{% url "org:add_fav" %}",
+                        data:{'fav_id': fav_id, 'fav_type': fav_type},
+                        async: true,
+                        beforeSend:function (xhr, settings) {
+                            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            console.log(current_elem);
+                            if(data.status == 'fail'){
+                                if(data.msg == '用户未登陆'){
+                                    window.location.href='/login/';
+                                }
+                            }else{
+                                current_elem.text(data.msg)
+                            }
+                        }
+                    })
+
+                }
+                $('#jsLeftBtn').on('click', function () {
+                    add_fav($(this), {{ course.id }}, 1);
+                });
+                $('#jsRightBtn').on('click', function () {
+                    add_fav($(this), {{ course.course_org.id }}, 2);
+                });
+            });
+    </script>
+{% endblock %}

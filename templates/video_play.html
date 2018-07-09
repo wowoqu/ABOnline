@@ -1,0 +1,81 @@
+{% extends 'course-vedio.html' %}
+{% load staticfiles %}
+{% block title %}
+    公开课视频播放
+{% endblock %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/course-vedio.css' %}">
+    <link href="https://vjs.zencdn.net/7.0.3/video-js.css" rel="stylesheet">
+    <style type="text/css">
+        .video-js .vjs-big-play-button{
+            top:50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+    </style>
+{% endblock %}
+{% block video_play %}
+    <div class="org-head">
+        <p class="bred"><a href="{% url 'index' %}">首页></a><a href="{% url 'course:course_list' %}">公开课程></a><a
+                href="{% url 'course:course_list' %}">{{ course.name }}></a><i>{{ video.name }}</i></p>
+    </div>
+    <video id="my-video" class="video-js" controls preload="auto" width="1200" height="600" poster="" data-setup="{}">
+        <source src="{{ video.url }}" type='video/mp4'>
+    </video>
+{% endblock %}
+{% block custom_js %}
+    <script src="http://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+    <script src="https://vjs.zencdn.net/7.0.3/video.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#lesson').addClass('active').siblings().removeClass('active');
+            $('.comment-conf').css('display', 'none');
+            $('.lesson-cont').css('display', 'block');
+            $('#lesson').bind('click', function () {
+                $('.comment-conf').css('display', 'none');
+                $('.lesson-cont').css('display', 'block');
+                $(this).addClass('active').siblings().removeClass('active');
+                {#console.log(1)#}
+            });
+            $('#comment').bind('click', function () {
+                $('.comment-conf').css('display', 'block');
+                $('.lesson-cont').css('display', 'none');
+                $(this).addClass('active').siblings().removeClass('active');
+                {#console.log(2)#}
+            });
+            $('#comm-submit').on('click', function () {
+                var comments = $('#js-comment').val();
+                if (comments == '') {
+                    alert('评论不能为空');
+                    return
+                }
+                $.ajax({
+                    cache: false,
+                    type: 'POST',
+                    url: "{% url "course:add_comments" %}",
+                    data: {'course_id': {{ course.id }}, 'comments': comments},
+                    async: true,
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
+                    },
+                    success: function (data) {
+                        console.log(data.msg);
+                        console.log(data.status);
+                        if (data.status == 'fail') {
+                            if (data.msg == '用户未登陆') {
+                                window.location.href = '/login/';
+                            } else {
+                                alert(data.msg)
+                            }
+                        } else if (data.status == 'success') {
+                            alert('成功');
+                            $('#js-comment').val("");
+                            window.location.reload();
+                            $('#comment').addClass('active').siblings().removeClass('active');
+                        }
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock %}
