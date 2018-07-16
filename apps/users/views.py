@@ -1,5 +1,6 @@
 import json
 
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login
@@ -15,7 +16,8 @@ from captcha.helpers import captcha_image_url
 from django.contrib.auth.hashers import make_password
 from utils.email_send import send_register_email
 from utils.mixin_utils import LoginRequiredMixin
-
+from operation.models import UserCourse, UserFavorite
+from organization.models import CourseOrg
 
 class RegisterView(View):
     def get(self, request):
@@ -227,6 +229,37 @@ class UpdateEmailView(LoginRequiredMixin, View):
             return HttpResponse('{"email":"修改邮箱成功"}', content_type='application/json')
         else:
             return HttpResponse('{"email":"验证码出错"}', content_type='application/json')
+
+
+class MyCourseView(LoginRequiredMixin, View):
+    def get(self, request):
+        current_page = 'course'
+        user_courses = UserCourse.objects.filter(user=request.user)
+
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(user_courses, 4, request=request)
+        user_courses = p.page(page)
+        return render(request, 'user-course.html', locals())
+
+
+class MyFavOrgView(LoginRequiredMixin, View):
+    """
+    我收藏的课程机构
+    """
+    def get(self, request):
+        current_page = 'favorg'
+        org_list = []
+        fav_orgs = UserFavorite.objects.filter(user=request.user, fav_type=2)
+        for fav_org in fav_orgs:
+            org_id = fav_org.fav_id
+            org = CourseOrg.objects.get(id=org_id)
+            org_list.append(org)
+        return render(request, 'user-favorg.html', locals())
+
 
 # Create your views here.
 # 函数形式的login

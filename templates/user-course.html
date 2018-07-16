@@ -1,0 +1,71 @@
+{% extends 'org_course.html' %}
+{% load staticfiles %}
+{% block title %}
+    我的课程
+{% endblock %}
+{% block logo %}
+    <div class="container logo-search">
+        <img class="logo" src="{% static 'images/logo.png' %}" alt="">
+        <h1 style="margin-right: 20px">个人首页</h1>
+    </div>
+{% endblock %}
+{% block coustom_bread %}
+    <section class="container org-list" style="position: relative">
+        <div class="org-head">
+            <p class="bred"><a href="{% url 'index' %}">首页></a><i><a href="{% url 'users:user_home' %}">个人中心></a></i><i>{% block page_path %}我的课程{% endblock %}</i></p>
+        </div>
+    </section>
+{% endblock %}
+{% block left_content %}
+    <ul>
+        <li class="{% ifequal current_page 'home' %}active{% endifequal %}"><a
+                href="{% url 'users:user_home' %}">个人资料</a></li>
+        <li class="{% ifequal current_page 'course' %}active{% endifequal %}"><a
+                 href="{% url 'users:my_course' %}">我的课程</a></li>
+        <li class="{% ifequal current_page 'favorg' %}active{% endifequal %}"><a
+                 href="{% url 'users:my_favorg' %}">我的收藏</a></li>
+        <li class="{% ifequal current_page 'teacher' %}active{% endifequal %}"><a
+                 href="">我的消息</a></li>
+    </ul>
+{% endblock %}
+{% block right_content %}
+    <div class="bs-div">
+        <h1>全部课程</h1>
+        <div class="bs-content">
+            {% for usercourse in user_courses.object_list %}
+                <div class="content-div">
+                    <a href="{% url 'course:course_detail' usercourse.course_id %}"><img src="/media/{{ usercourse.course.image }}" alt=""></a>
+                    <h1>{{ usercourse.course.name }}</h1>
+                    <div style="overflow: hidden">
+                        <span style="float: left;margin-bottom: 20px">价格：<i>免费</i></span>
+                        <span style="float: right;margin-bottom: 20px">学习人数：<i>{{ usercourse.course.students }}</i></span>
+                    </div>
+                    <p style="float:left;">{{ usercourse.course.course_org.name }}</p>
+                    <p style="float:right;">{{ usercourse.course.fav_nums }}</p>
+                </div>
+            {% endfor %}
+            <div class="paging-list">
+            <ul>
+                {% if user_courses.has_previous %}
+                    <li class="spec"><a href="?{{ user_courses.previous_page_number.querystring }}"
+                    >上一页</a></li>
+                {% endif %}
+                {% for page in user_courses.pages %}
+                    {% if page %}
+                        {% ifequal page user_courses.number %}
+                            <li class="active"><a href="">{{ page }}</a></li>
+                        {% else %}
+                            <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                        {% endifequal %}
+                    {% else %}
+                        <li><a href="">...</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if user_courses.has_next %}
+                    <li class="spec"><a href="?{{ user_courses.next_page_number.querystring }}">下一页</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        </div>
+    </div>
+{% endblock %}

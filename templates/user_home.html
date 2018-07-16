@@ -1,5 +1,6 @@
 {% extends 'index_base.html' %}
 {% load staticfiles %}
+{% load staticfiles %}
 {% block title %}
     个人中心
 {% endblock %}
@@ -24,11 +25,11 @@
 {% block left_content %}
     <ul>
         <li class="{% ifequal current_page 'home' %}active{% endifequal %}"><a
-                href="">个人资料</a></li>
+                href="{% url 'users:user_home' %}">个人资料</a></li>
         <li class="{% ifequal current_page 'course' %}active{% endifequal %}"><a
-                 href="">我的课程</a></li>
-        <li class="{% ifequal current_page 'desc' %}active{% endifequal %}"><a
-                 href="">我的收藏</a></li>
+                 href="{% url 'users:my_course' %}">我的课程</a></li>
+        <li class="{% ifequal current_page 'favorg' %}active{% endifequal %}"><a
+                 href="{% url 'users:my_favorg' %}">我的收藏</a></li>
         <li class="{% ifequal current_page 'teacher' %}active{% endifequal %}"><a
                  href="">我的消息</a></li>
     </ul>
@@ -126,7 +127,7 @@
                 fr.readAsDataURL(imgObj);//将图片读取为DataURL
                 var obj = $('#jsChangeImg')[0];//
 
-                if(filePath.indexOf("jpg") != -1 || filePath.indexOf("JPG") != -1 || filePath.indexOf("PNG") != -1 || filePath.indexOf("png") != -1) {
+                if(filePath.indexOf("jpg") != -1 || filePath.indexOf("JPG") != -1 || filePath.indexOf("PNG") != -1 || filePath.indexOf("png") != -1  || filePath.indexOf("jpeg") != -1) {
                     var arr = filePath.split('\\');
                     var fileName = arr[arr.length - 1];
 
