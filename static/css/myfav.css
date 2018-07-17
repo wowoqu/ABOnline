@@ -1,0 +1,34 @@
+.fav-list{
+    background: #f8f8f8;
+    border-bottom: 1px solid #ccc;
+}
+.fav-list ul{
+    margin-left: 10px;
+    overflow: hidden;
+    font-size: 14px;
+}
+.fav-list li{
+    float: left;
+    margin: 10px 24px 10px 0;
+    cursor: pointer;
+}
+.fav-list li.active{
+    color: #0C0C0C;
+}
+.fav-bd{
+    overflow: hidden;
+}
+.fav-bd a{
+    float: left;
+}
+.fav-bd img{
+    display: block;
+    width: 210px;
+    height: 160px;
+    margin: 10px;
+}
+.fav-bd h2{
+    margin: 40px 0 16px 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
